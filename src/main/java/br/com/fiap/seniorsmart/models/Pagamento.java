@@ -1,7 +1,15 @@
 package br.com.fiap.seniorsmart.models;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.EntityModel;
+
+import br.com.fiap.seniorsmart.controllers.PagamentoController;
+import br.com.fiap.seniorsmart.controllers.PlanoController;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
@@ -52,4 +61,15 @@ public class Pagamento {
     @ManyToOne
     @JoinColumn(name = "cd_plano")
     private Plano plano;
+
+    public EntityModel<Pagamento> toEntityModel() {
+        return EntityModel.of(
+            this,
+            linkTo(methodOn(PagamentoController.class).show(id)).withSelfRel(),
+            linkTo(methodOn(PagamentoController.class).delete(id)).withRel("delete"),
+            linkTo(methodOn(PagamentoController.class).index(null, Pageable.unpaged())).withRel("all"),
+
+            linkTo(methodOn(PlanoController.class).show(this.getPlano().getId())).withRel("plano")
+            );
+    }
 }

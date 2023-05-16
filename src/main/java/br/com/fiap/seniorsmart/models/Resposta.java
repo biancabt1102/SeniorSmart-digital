@@ -1,5 +1,9 @@
 package br.com.fiap.seniorsmart.models;
 
+import org.springframework.hateoas.EntityModel;
+
+import br.com.fiap.seniorsmart.controllers.PerguntaController;
+import br.com.fiap.seniorsmart.controllers.RespostaController;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +17,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import org.springframework.data.domain.Pageable;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +40,14 @@ public class Resposta {
     @OneToOne
     @JoinColumn(name = "cd_pergunta")
     private Pergunta pergunta;
+
+    public EntityModel<Resposta> toEntityModel() {
+        return EntityModel.of(
+            this,
+            linkTo(methodOn(RespostaController.class).show(id)).withSelfRel(),
+            linkTo(methodOn(RespostaController.class).index(null, Pageable.unpaged())).withRel("all"),
+
+            linkTo(methodOn(PerguntaController.class).show(this.getPergunta().getId())).withRel("pergunta")
+        );
+    }
 }

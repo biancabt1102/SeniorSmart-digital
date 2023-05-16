@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,25 +31,33 @@ public class PerguntaController {
     @Autowired
     PerguntaRepository perguntaRepository;
 
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
+
     @GetMapping
-    public Page<Pergunta> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
-        log.info("Buscar Perguntas");        
-        if (busca == null) 
-            return perguntaRepository.findAll(pageable);
-        return perguntaRepository.findByPerguntaContaining(busca, pageable);
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
+        log.info("Buscar Perguntas");
+        Page<Pergunta> perguntas = (busca == null) ?
+            perguntaRepository.findAll(pageable):
+            perguntaRepository.findByPerguntaContaining(busca, pageable);
+
+        return assembler.toModel(perguntas.map(Pergunta::toEntityModel));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Object> show(@PathVariable Long id) {
+    public EntityModel<Pergunta> show(@PathVariable Long id) {
         log.info("Buscar Pergunta " + id);
-        return ResponseEntity.ok(findByPergunta(id));
+        var pergunta = findByPergunta(id);
+        return pergunta.toEntityModel();
     }
 
     @PostMapping
-    public ResponseEntity<Pergunta> create(@RequestBody @Valid Pergunta pergunta) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Pergunta pergunta) {
         log.info("Cadastrando Pergunta" + pergunta);
         perguntaRepository.save(pergunta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(pergunta) ;
+        return ResponseEntity
+            .created(pergunta.toEntityModel().getRequiredLink("self").toUri())
+            .body(pergunta.toEntityModel());
     }
 
     private Pergunta findByPergunta(Long id) {

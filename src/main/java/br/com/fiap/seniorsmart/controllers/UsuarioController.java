@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,25 +33,34 @@ public class UsuarioController {
 	@Autowired
 	UsuarioRepository usuarioRepository;
 
+	@Autowired
+    PagedResourcesAssembler<Object> assembler;
+
 	@GetMapping
-    public Page<Usuario> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){        
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){        
         log.info("Buscar Usuários");
-        if (busca == null) 
-            return usuarioRepository.findAll(pageable);
-        return usuarioRepository.findByNomeContaining(busca, pageable);
+
+		Page<Usuario> usuarios = (busca == null) ?
+            usuarioRepository.findAll(pageable):
+            usuarioRepository.findByNomeContaining(busca, pageable);
+
+        return assembler.toModel(usuarios.map(Usuario::toEntityModel));
     }
 
 	@GetMapping("{id}")
-	public ResponseEntity<Object> show(@PathVariable Long id) {
+	public EntityModel<Usuario> show(@PathVariable Long id) {
 		log.info("Buscar Usuário " + id);
-		return ResponseEntity.ok(findByUsuario(id));
+		var usuario = findByUsuario(id);
+		return usuario.toEntityModel();
 	}
 
 	@PostMapping
-	public ResponseEntity<Usuario> create(@RequestBody @Valid Usuario usuario) {
+	public ResponseEntity<Object> create(@RequestBody @Valid Usuario usuario) {
 		log.info("Cadastrando Usuário" + usuario);
 		usuarioRepository.save(usuario);
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+		return ResponseEntity
+            .created(usuario.toEntityModel().getRequiredLink("self").toUri())
+            .body(usuario.toEntityModel());
 	}
 
 	@DeleteMapping("{id}")
@@ -60,13 +72,13 @@ public class UsuarioController {
 	}
 
 	@PutMapping("{id}")
-	public ResponseEntity<Object> update(@PathVariable @Valid Long id, @RequestBody Usuario usuario) {
+	public EntityModel<Usuario> update(@PathVariable @Valid Long id, @RequestBody Usuario usuario) {
         log.info("Alterar Usuário " + id);
 		findByUsuario(id);
 
 		usuario.setId(id);
 		usuarioRepository.save(usuario);
-		return ResponseEntity.ok(usuario);
+		return usuario.toEntityModel();
 	}
 
 	private Usuario findByUsuario(Long id) {

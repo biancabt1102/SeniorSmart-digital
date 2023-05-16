@@ -1,9 +1,12 @@
 package br.com.fiap.seniorsmart.controllers;
 
-import java.util.List;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,27 +33,37 @@ public class PagamentoController {
     @Autowired
     PagamentoRepository pagamentoRepository;
 
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
+
     @GetMapping
-    public List<Pagamento> index() {
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
         log.info("Buscar Pagamentos");
-        return pagamentoRepository.findAll();
+        Page<Pagamento> pagamentos = (busca == null) ?
+            pagamentoRepository.findAll(pageable):
+            pagamentoRepository.findByNomeNoCartaoContaining(busca, pageable);
+
+        return assembler.toModel(pagamentos.map(Pagamento::toEntityModel));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Object> show(@PathVariable Long id) {
+    public EntityModel<Pagamento> show(@PathVariable Long id) {
         log.info("Buscar Pagamento " + id);
-        return ResponseEntity.ok(findByPagamento(id));
+        var pagamento = findByPagamento(id);
+        return pagamento.toEntityModel();
     }
 
     @PostMapping
-    public ResponseEntity<Pagamento> create(@RequestBody @Valid Pagamento pagamento) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Pagamento pagamento) {
         log.info("Cadastrando Pagamento " + pagamento);
         pagamentoRepository.save(pagamento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(pagamento);
+        return ResponseEntity
+            .created(pagamento.toEntityModel().getRequiredLink("self").toUri())
+            .body(pagamento.toEntityModel());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
+    public ResponseEntity<Pagamento> delete(@PathVariable Long id) {
         log.info("Deletando Pagamento");
 
         pagamentoRepository.delete(findByPagamento(id));
@@ -57,13 +71,13 @@ public class PagamentoController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable @Valid Long id, @RequestBody Pagamento pagamento) {
+    public EntityModel<Pagamento> update(@PathVariable @Valid Long id, @RequestBody Pagamento pagamento) {
         log.info("Alterar Pagamento " + id);
         findByPagamento(id);
 
         pagamento.setId(id);
         pagamentoRepository.save(pagamento);
-        return ResponseEntity.ok(pagamento);
+        return pagamento.toEntityModel();
     }
 
     private Pagamento findByPagamento(Long id) {

@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,26 +24,34 @@ public class RespostaController {
 
     @Autowired
     private RespostaRepository respostaRepository;
+    
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
 
     @GetMapping
-    public Page<Resposta> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
         log.info("Buscar Respostas");        
-        if (busca == null) 
-            return respostaRepository.findAll(pageable);
-        return respostaRepository.findByRespostaContaining(busca, pageable);
+        Page<Resposta> resposta = (busca == null) ?
+            respostaRepository.findAll(pageable):
+            respostaRepository.findByRespostaContaining(busca, pageable);
+
+        return assembler.toModel(resposta.map(Resposta::toEntityModel));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Object> show(@PathVariable Long id) {
+    public EntityModel<Resposta> show(@PathVariable Long id) {
         log.info("Buscar Resposta " + id);
-        return ResponseEntity.ok(findByResposta(id));
+        var resposta = findByResposta(id);
+        return resposta.toEntityModel();
     }
 
     @PostMapping
-    public ResponseEntity<Resposta> create(@RequestBody @Valid Resposta resposta) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Resposta resposta) {
         log.info("Cadastrando Resposta" + resposta);
         respostaRepository.save(resposta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
+        return ResponseEntity
+            .created(resposta.toEntityModel().getRequiredLink("self").toUri())
+            .body(resposta.toEntityModel());
     }
 
     private Resposta findByResposta(Long id) {
