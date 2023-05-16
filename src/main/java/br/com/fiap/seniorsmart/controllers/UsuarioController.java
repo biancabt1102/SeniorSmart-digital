@@ -9,6 +9,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.fiap.seniorsmart.models.Credencial;
+import br.com.fiap.seniorsmart.models.Token;
 import br.com.fiap.seniorsmart.models.Usuario;
 import br.com.fiap.seniorsmart.repository.UsuarioRepository;
+import br.com.fiap.seniorsmart.service.TokenService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +40,15 @@ public class UsuarioController {
 
 	@Autowired
     PagedResourcesAssembler<Object> assembler;
+
+	@Autowired
+    AuthenticationManager manager;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    TokenService tokenService;
 
 	@GetMapping
     public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){        
@@ -54,9 +68,10 @@ public class UsuarioController {
 		return usuario.toEntityModel();
 	}
 
-	@PostMapping
+	@PostMapping("/cadastro")
 	public ResponseEntity<Object> create(@RequestBody @Valid Usuario usuario) {
 		log.info("Cadastrando Usuário" + usuario);
+		usuario.setSenha(encoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuario);
 		return ResponseEntity
             .created(usuario.toEntityModel().getRequiredLink("self").toUri())
@@ -80,6 +95,14 @@ public class UsuarioController {
 		usuarioRepository.save(usuario);
 		return usuario.toEntityModel();
 	}
+
+
+    @PostMapping("/login")
+    public ResponseEntity<Token> login(@RequestBody Credencial credencial){
+        manager.authenticate(credencial.toAuthentication());
+        var token = tokenService.generateToken(credencial);
+        return ResponseEntity.ok(token);
+    }
 
 	private Usuario findByUsuario(Long id) {
 		return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
