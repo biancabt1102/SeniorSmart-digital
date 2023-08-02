@@ -1,5 +1,7 @@
 package br.com.fiap.seniorsmart.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +69,28 @@ public class UsuarioController {
 		var usuario = findByUsuario(id);
 		return usuario.toEntityModel();
 	}
+
+	@GetMapping("/por-plano/{idPlano}")
+    public ResponseEntity<EntityModel<Usuario>> getByPlanoId(@PathVariable Long idPlano) {
+        log.info("Buscar Usuário pelo ID do Plano");
+
+        Optional<Usuario> usuario = usuarioRepository.findByPlanoId(idPlano);
+
+        return usuario.map(u -> ResponseEntity.ok(u.toEntityModel())).orElse(ResponseEntity.notFound().build());
+    }
+
+	@GetMapping("/email")
+    public ResponseEntity<Usuario> buscaUsuarioPorEmail(@RequestParam String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+
+        if (usuario.isPresent()) {
+            return ResponseEntity.ok(usuario.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+	
 
 	@PostMapping("/cadastro")
 	public ResponseEntity<Object> create(@RequestBody @Valid Usuario usuario) {

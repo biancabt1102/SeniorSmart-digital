@@ -53,7 +53,7 @@ public class PlanoController {
         return plano.toEntityModel();
     }
 
-    @PostMapping
+    @PostMapping("/cadastro")
     public ResponseEntity<Object> create(@RequestBody @Valid Plano plano) {
         log.info("Cadastrando Plano" + plano);
         planoRepository.save(plano);

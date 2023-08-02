@@ -53,7 +53,14 @@ public class PagamentoController {
         return pagamento.toEntityModel();
     }
 
-    @PostMapping
+    @GetMapping("/buscarPorPlano/{planoId}")
+    public PagedModel<EntityModel<Object>> buscaPagamentosPorPlano(@PathVariable Long planoId, @PageableDefault(size = 5) Pageable pageable) {
+        log.info("Buscar Pagamentos pelo ID do Plano: " + planoId);
+        Page<Pagamento> pagamentos = pagamentoRepository.findByPlanoId(planoId, pageable);
+        return assembler.toModel(pagamentos.map(Pagamento::toEntityModel));
+    }
+
+    @PostMapping("/cadastro")
     public ResponseEntity<Object> create(@RequestBody @Valid Pagamento pagamento) {
         log.info("Cadastrando Pagamento " + pagamento);
         pagamentoRepository.save(pagamento);

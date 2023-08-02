@@ -9,4 +9,6 @@ import br.com.fiap.seniorsmart.models.Pagamento;
 public interface PagamentoRepository extends JpaRepository<Pagamento, Long>{
 
     Page<Pagamento> findByNomeNoCartaoContaining(String busca, Pageable pageable);
+
+    Page<Pagamento> findByPlanoId(Long planoId, Pageable pageable);
 }
