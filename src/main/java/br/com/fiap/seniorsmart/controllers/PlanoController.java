@@ -1,5 +1,6 @@
 package br.com.fiap.seniorsmart.controllers;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +23,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.seniorsmart.models.Plano;
 import br.com.fiap.seniorsmart.repository.PlanoRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/planos")
+@Tag(name = "Plano", description = "Manipulação de dados dos planos feitos pelos usuários cadastrados")
 @Slf4j
 public class PlanoController {
 
@@ -37,7 +44,16 @@ public class PlanoController {
     PagedResourcesAssembler<Object> assembler;
 
     @GetMapping
-    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable) {
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Listar planos", 
+		description = "Retorna todos os planos cadastrados"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Listagem feita com sucesso"),
+		@ApiResponse(responseCode = "404", description = "Lista não encontrada")
+	})
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @ParameterObject @PageableDefault(size = 5) Pageable pageable) {
         log.info("Buscar Planos");
         Page<Plano> planos = (busca == null) ?
             planoRepository.findAll(pageable):
@@ -47,6 +63,15 @@ public class PlanoController {
     }
 
     @GetMapping("{id}")
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Detalhes plano", 
+		description = "Retorna o plano cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Os dados foram retornados com sucesso"),
+		@ApiResponse(responseCode = "404", description = "Não foi encontrado um plano com esse id")
+	})
     public EntityModel<Plano> show(@PathVariable Long id) {
         log.info("Buscar Plano " + id);
         var plano = findByPlano(id);
@@ -54,7 +79,15 @@ public class PlanoController {
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<Object> create(@RequestBody @Valid Plano plano) {
+	@Operation(
+		summary = "Cadastrar plano", 
+		description = "Cadastrando o plano com os campos requisitados"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "201", description = "Plano criado com sucesso"),
+		@ApiResponse(responseCode = "400", description = "Plano inválido")
+	})
+    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Plano plano) {
         log.info("Cadastrando Plano" + plano);
         planoRepository.save(plano);
         return ResponseEntity
@@ -63,6 +96,15 @@ public class PlanoController {
     }
 
     @DeleteMapping("{id}")
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Excluindo plano", 
+		description = "Exclui o plano cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "204", description = "Requisição bem-sucedida"),
+		@ApiResponse(responseCode = "404", description = "Conteúdo não encontrado"),
+	})
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info("Deletando Plano");
 
@@ -71,7 +113,17 @@ public class PlanoController {
     }
 
     @PutMapping("{id}")
-    public EntityModel<Plano> update(@PathVariable Long id, @RequestBody Plano plano) {
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Alterar dados do plano", 
+		description = "Alteração de dados do plano cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Alteração realizada com sucesso"),
+		@ApiResponse(responseCode = "400", description = "Alteração inválida"),
+		@ApiResponse(responseCode = "404", description = "Plano não encontrada")
+	})
+    public EntityModel<Plano> update(@PathVariable Long id, @ParameterObject @RequestBody Plano plano) {
         log.info("Alterar Plano " + id);
         findByPlano(id);
 

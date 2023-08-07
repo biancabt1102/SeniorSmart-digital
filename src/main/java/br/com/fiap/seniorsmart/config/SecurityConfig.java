@@ -27,6 +27,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "api/usuarios/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "api/planos/cadastro").permitAll()
                     .requestMatchers(HttpMethod.POST, "api/pagamentos/cadastro").permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

@@ -1,5 +1,6 @@
 package br.com.fiap.seniorsmart.controllers;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +23,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.seniorsmart.models.Pagamento;
 import br.com.fiap.seniorsmart.repository.PagamentoRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/pagamentos")
+@Tag(name = "Pagamento", description = "Manipulação de dados dos pagamentos feitos pelos usuários cadastrados")
 @Slf4j
 public class PagamentoController {
 
@@ -37,7 +44,16 @@ public class PagamentoController {
     PagedResourcesAssembler<Object> assembler;
 
     @GetMapping
-    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable){
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Listar pagamentos", 
+		description = "Retorna todos os pagamentos cadastrados"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Listagem feita com sucesso"),
+		@ApiResponse(responseCode = "404", description = "Lista não encontrada"),
+	})
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @ParameterObject @PageableDefault(size = 5) Pageable pageable){
         log.info("Buscar Pagamentos");
         Page<Pagamento> pagamentos = (busca == null) ?
             pagamentoRepository.findAll(pageable):
@@ -47,6 +63,15 @@ public class PagamentoController {
     }
 
     @GetMapping("{id}")
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Detalhes pagamento", 
+		description = "Retorna o pagamento cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Os dados foram retornados com sucesso"),
+		@ApiResponse(responseCode = "404", description = "Não foi encontrado um pagamento com esse id"),
+	})
     public EntityModel<Pagamento> show(@PathVariable Long id) {
         log.info("Buscar Pagamento " + id);
         var pagamento = findByPagamento(id);
@@ -54,6 +79,15 @@ public class PagamentoController {
     }
 
     @GetMapping("/buscarPorPlano/{planoId}")
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Encontrar pagamento por id do plano", 
+		description = "Retorna o pagamento cadastrado com o id do plano informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Os dados foram retornados com sucesso"),
+		@ApiResponse(responseCode = "404", description = "Não foi encontrado um pagamento com o id desse plano"),
+	})
     public PagedModel<EntityModel<Object>> buscaPagamentosPorPlano(@PathVariable Long planoId, @PageableDefault(size = 5) Pageable pageable) {
         log.info("Buscar Pagamentos pelo ID do Plano: " + planoId);
         Page<Pagamento> pagamentos = pagamentoRepository.findByPlanoId(planoId, pageable);
@@ -61,7 +95,16 @@ public class PagamentoController {
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<Object> create(@RequestBody @Valid Pagamento pagamento) {
+	@Operation(
+		summary = "Cadastrar pagamento", 
+		description = "Cadastrando o pagamento com os campos requisitados"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "201", description = "Pagamento criado com sucesso"),
+		@ApiResponse(responseCode = "400", description = "Pagamento invalidos"),
+		@ApiResponse(responseCode = "409", description = "Já existe um pagamento para o usuário informado"),
+	})
+    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Pagamento pagamento) {
         log.info("Cadastrando Pagamento " + pagamento);
         pagamentoRepository.save(pagamento);
         return ResponseEntity
@@ -70,6 +113,15 @@ public class PagamentoController {
     }
 
     @DeleteMapping("{id}")
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Excluindo pagamento", 
+		description = "Exclui o pagamento cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "204", description = "Requisição bem-sucedida"),
+		@ApiResponse(responseCode = "404", description = "Conteúdo não encontrado"),
+	})
     public ResponseEntity<Pagamento> delete(@PathVariable Long id) {
         log.info("Deletando Pagamento");
 
@@ -78,7 +130,17 @@ public class PagamentoController {
     }
 
     @PutMapping("{id}")
-    public EntityModel<Pagamento> update(@PathVariable @Valid Long id, @RequestBody Pagamento pagamento) {
+    @SecurityRequirement(name = "bearer-key")
+    @Operation(
+		summary = "Alterar dados do pagamento", 
+		description = "Alteração de dados do pagamento cadastrado com o id informado"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Alteração realizada com sucesso"),
+		@ApiResponse(responseCode = "400", description = "Alteração inválida"),
+		@ApiResponse(responseCode = "404", description = "Pagamento não encontrado")
+	})
+    public EntityModel<Pagamento> update(@PathVariable @Valid Long id, @ParameterObject @RequestBody Pagamento pagamento) {
         log.info("Alterar Pagamento " + id);
         findByPagamento(id);
 
