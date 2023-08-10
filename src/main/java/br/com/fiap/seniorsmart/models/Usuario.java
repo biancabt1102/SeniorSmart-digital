@@ -59,7 +59,6 @@ public class Usuario implements UserDetails {
     @Column(name = "ds_senha")
     private String senha;
 
-    @NotBlank(message = "A confirmação de senha é obrigatória")
     @Size(min = 8)
     @Transient
     private String confirmarSenha;

@@ -145,7 +145,7 @@ public class UsuarioController {
 		@ApiResponse(responseCode = "400", description = "Usuário invalidos"),
 		@ApiResponse(responseCode = "409", description = "Já existe um usuário com o e-mail fornecido"),
 	})
-	public ResponseEntity<Object> create(@ParameterObject @RequestBody @Valid Usuario usuario) {
+	public ResponseEntity<Object> create(@RequestBody @Valid Usuario usuario) {
 		log.info("Cadastrando Usuário" + usuario);
 		usuario.setSenha(encoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuario);
@@ -182,7 +182,7 @@ public class UsuarioController {
 		@ApiResponse(responseCode = "400", description = "Alteração inválida"),
 		@ApiResponse(responseCode = "404", description = "Avaliação não encontrada")
 	})
-	public EntityModel<Usuario> update(@PathVariable @Valid Long id, @ParameterObject @RequestBody Usuario usuario) {
+	public EntityModel<Usuario> update(@PathVariable @Valid Long id, @RequestBody Usuario usuario) {
         log.info("Alterar Usuário " + id);
 		findByUsuario(id);
 
@@ -201,7 +201,7 @@ public class UsuarioController {
 		@ApiResponse(responseCode = "200", description = "Login realizada com sucesso"),
 		@ApiResponse(responseCode = "400", description = "Campos inválidos")
 	})
-    public ResponseEntity<Token> login(@RequestBody @ParameterObject Credencial credencial){
+    public ResponseEntity<Token> login(@RequestBody Credencial credencial){
         manager.authenticate(credencial.toAuthentication());
         var token = tokenService.generateToken(credencial);
         return ResponseEntity.ok(token);

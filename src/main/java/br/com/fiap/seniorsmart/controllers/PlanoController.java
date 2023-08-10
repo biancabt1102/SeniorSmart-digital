@@ -87,7 +87,7 @@ public class PlanoController {
 		@ApiResponse(responseCode = "201", description = "Plano criado com sucesso"),
 		@ApiResponse(responseCode = "400", description = "Plano inválido")
 	})
-    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Plano plano) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Plano plano) {
         log.info("Cadastrando Plano" + plano);
         planoRepository.save(plano);
         return ResponseEntity
@@ -123,7 +123,7 @@ public class PlanoController {
 		@ApiResponse(responseCode = "400", description = "Alteração inválida"),
 		@ApiResponse(responseCode = "404", description = "Plano não encontrada")
 	})
-    public EntityModel<Plano> update(@PathVariable Long id, @ParameterObject @RequestBody Plano plano) {
+    public EntityModel<Plano> update(@PathVariable Long id, @RequestBody Plano plano) {
         log.info("Alterar Plano " + id);
         findByPlano(id);
 
