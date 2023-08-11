@@ -78,7 +78,7 @@ public class RespostaController {
 		@ApiResponse(responseCode = "201", description = "Resposta criada com sucesso"),
 		@ApiResponse(responseCode = "400", description = "Resposta inválida")
 	})
-    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Resposta resposta) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Resposta resposta) {
         log.info("Cadastrando Resposta" + resposta);
         respostaRepository.save(resposta);
         return ResponseEntity

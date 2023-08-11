@@ -185,8 +185,8 @@ public class UsuarioController {
 	public EntityModel<Usuario> update(@PathVariable @Valid Long id, @RequestBody Usuario usuario) {
         log.info("Alterar Usuário " + id);
 		findByUsuario(id);
-
 		usuario.setId(id);
+		usuario.setSenha(encoder.encode(usuario.getSenha()));
 		usuarioRepository.save(usuario);
 		return usuario.toEntityModel();
 	}

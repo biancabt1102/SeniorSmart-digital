@@ -1,5 +1,7 @@
 package br.com.fiap.seniorsmart.controllers;
 
+import java.util.Optional;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.seniorsmart.models.Pagamento;
+import br.com.fiap.seniorsmart.models.Usuario;
 import br.com.fiap.seniorsmart.repository.PagamentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -88,10 +91,11 @@ public class PagamentoController {
 		@ApiResponse(responseCode = "200", description = "Os dados foram retornados com sucesso"),
 		@ApiResponse(responseCode = "404", description = "Não foi encontrado um pagamento com o id desse plano"),
 	})
-    public PagedModel<EntityModel<Object>> buscaPagamentosPorPlano(@PathVariable Long planoId, @PageableDefault(size = 5) Pageable pageable) {
-        log.info("Buscar Pagamentos pelo ID do Plano: " + planoId);
-        Page<Pagamento> pagamentos = pagamentoRepository.findByPlanoId(planoId, pageable);
-        return assembler.toModel(pagamentos.map(Pagamento::toEntityModel));
+    public ResponseEntity<EntityModel<Pagamento>> buscaPagamentosPorPlano(@PathVariable Long planoId) {
+        log.info("Buscar Pagamentos pelo ID do Plano");
+        Optional<Pagamento> pagamento = pagamentoRepository.findByPlanoId(planoId);
+        
+        return pagamento.map(p -> ResponseEntity.ok(p.toEntityModel())).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/cadastro")
@@ -104,7 +108,7 @@ public class PagamentoController {
 		@ApiResponse(responseCode = "400", description = "Pagamento invalidos"),
 		@ApiResponse(responseCode = "409", description = "Já existe um pagamento para o usuário informado"),
 	})
-    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Pagamento pagamento) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Pagamento pagamento) {
         log.info("Cadastrando Pagamento " + pagamento);
         pagamentoRepository.save(pagamento);
         return ResponseEntity
@@ -140,7 +144,7 @@ public class PagamentoController {
 		@ApiResponse(responseCode = "400", description = "Alteração inválida"),
 		@ApiResponse(responseCode = "404", description = "Pagamento não encontrado")
 	})
-    public EntityModel<Pagamento> update(@PathVariable @Valid Long id, @ParameterObject @RequestBody Pagamento pagamento) {
+    public EntityModel<Pagamento> update(@PathVariable @Valid Long id, @RequestBody Pagamento pagamento) {
         log.info("Alterar Pagamento " + id);
         findByPagamento(id);
 

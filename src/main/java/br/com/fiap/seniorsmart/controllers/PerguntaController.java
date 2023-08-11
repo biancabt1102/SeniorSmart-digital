@@ -84,7 +84,7 @@ public class PerguntaController {
 		@ApiResponse(responseCode = "201", description = "Pergunta criada com sucesso"),
 		@ApiResponse(responseCode = "400", description = "Pergunta inválida")
 	})
-    public ResponseEntity<Object> create(@RequestBody @ParameterObject @Valid Pergunta pergunta) {
+    public ResponseEntity<Object> create(@RequestBody @Valid Pergunta pergunta) {
         log.info("Cadastrando Pergunta" + pergunta);
         perguntaRepository.save(pergunta);
         return ResponseEntity
