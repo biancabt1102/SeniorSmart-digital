@@ -4,6 +4,8 @@
 
 <hr>
 
+*Para rodar adicionar seu endereço de ip no properties da Api e colocar username e password da oracle ou outras configurações se necessário. Faça dowload da dependências e faça um reload no mavem. Possivel vizualizar o swagger quando estiver rodando.*
+
 <br>
 
 <h2 style="font-style: italic; color: #F5FFFA" >Ideia da aplicação</h2>
