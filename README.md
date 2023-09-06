@@ -10,7 +10,18 @@
 
 <h2 style="font-style: italic; color: #F5FFFA" >Ideia da aplicação</h2>
 
-<img src="image/Digital Business - SeniorSmart.png" width="auto">
+<img src="image/Seniorsmart_arquitetura_solucao.png" width="auto">
+
+<br>
+
+Legenda da solução:
+
+1. API do chatGPT que irá receber as perguntas do usuário e responde-las.
+2. O aplicativo móvel feito em React Native que faz a ligação com a API do ChatGPT configurando o chatbot para responder as perguntas que o usuário fizer.
+3. O aplicativo web feito em React, para que o usuário possa utilizar o chatbot também pelo site que ficará na nuvem em "Serviços de Aplicativo" na Azure.
+4. A API da SeniorSmart que vai persistir os dados no Banco de Dados Oracle, que virá tanto do aplicativo móvel quanto do aplicativo web com seu CRUD e endpoints.
+5. Banco de Dados Oracle que irá armazenar, gerenciar e recuperar informações de forma eficiente e segura.
+6. Serviços de Aplicativo, irá armazenar tanto a API da SeniorSmart, quanto o aplicativo web na nuvem da Azure.
 
 <br><hr>
 
@@ -18,6 +29,7 @@
 
 - Usuário:
     - [Cadastrar](#cadastrar-usuário)
+    - [Login](#login-usuário)
     - [Listar todos](#listar-usuários)
     - [Alterar](#alterar-usuário)
     - [Detalhes](#detalhes-usuário)
@@ -51,7 +63,7 @@
 
 ### Cadastrar Usuário
 
-`POST` /seniorsmart/api/usuario
+`POST` /api/usuarios/cadastro
 
 *Campos da requisição*
 
@@ -67,13 +79,18 @@
 
 ```
 {
-    "nomeUsuario": "Mateus Araujo",
-    "emailUsuario": "matheusaraujo@hotmail.com",
-    "senhaUsuario": "03121865",
-    "confirmacaoSenha": "03121865",
-    "dataNascimentoUsuario": "15-05-1860",
-    "telefoneUsuario": "11940028922",
-    "tipoPlano": "Teste Grátis"
+    "nome": "Matheus Araujo",
+    "email": "matheusaraujo@hotmail.com",
+    "senha": "03121985",
+    "confirmarSenha": "03121985",
+    "data": "1860-05-15",
+    "telefone": "(11) 94002-8922",
+    "plano": {
+        "id": 1,
+        "tipoPlano": "Teste grátis",
+        "planoMensal": null,
+        "planoAnual": null
+    }
 }
 ```
 
@@ -87,9 +104,45 @@
 
 <hr>
 
+### Login Usuário
+
+`POST` /api/usuarios/login
+
+*Campos da requisição*  
+
+|Campo|Tipo|Obrigatório|Descrição|
+|:----:|----|:-------:|---------|
+|email|String|sim|Email cadastrado|
+|senha|String|não|Senha cadastrada|
+
+```
+{
+    "email": "matheusaraujo@hotmail.com",
+    "senha": "03121985"
+}
+```
+
+*Exemplo de resposta*
+
+|Campo|Tipo|Descrição|
+|-----|----|-------|
+|token|String|Usado para autenticar e permitir o acesso controlado a recursos ou funcionalidades da API.
+|type|String|Tipo de token utilizado.
+|prefix|String|Prefixo que indica como o token deve ser formatado
+
+```
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXRoZXVzYXJhdWpvQGhvdG1haWwuY29tIiwiaXNzIjoiTmFvRmFsaW5kbyIsImV4cCI6MTY5MzYxNzczOX0.bVNi2o2xZqv3QxWZdTIxaAKNcs0gDJv8r7vPP2gyiOw",
+    "type": "JWT",
+    "prefix": "Bearer"
+}
+```
+
+<hr>
+
 ### Listar Usuários
 
-`GET` /seniorsmart/api/usuarios
+`GET` /api/usuarios
 
 *Exemplo de resposta*
 
@@ -148,7 +201,7 @@
 
 ### Alterar Usuário
 
-`PUT` /seniorsmart/api/usuario/{id}
+`PUT` /api/usuarios/{id}
 
 *Campos da requisição*
 
@@ -186,7 +239,7 @@
 
 ### Detalhes Usuário
 
-`GET` /seniorsmart/api/usuario/{id}
+`GET` /api/usuarios/{id}
 
 *Exemplo de resposta*
 
@@ -224,7 +277,7 @@
 
 ### Excluir Usuário
 
-`DELETE` /seniorsmart/api/usuario/{id}
+`DELETE` /api/usuarios/{id}
 
 *Corpo da resposta*
 
@@ -237,7 +290,7 @@
 
 ### Cadastrar Plano
 
-`POST` /seniorsmart/api/plano
+`POST` /api/planos/cadastro
 
 *Campos da requisição*
 
@@ -264,7 +317,7 @@
 
 ### Listar Planos
 
-`GET` /seniorsmart/api/planos
+`GET` /api/planos
 
 *Campos da requisição*
 
@@ -308,7 +361,7 @@
 
 ### Alterar Plano
 
-`PUT` /seniorsmart/api/plano/{id}
+`PUT` /api/planos/{id}
 
 *Campos da requisição*
 
@@ -338,7 +391,7 @@
 
 ### Detalhes Plano
 
-`GET` /seniorsmart/api/plano/{id}
+`GET` /api/planos/{id}
 
 *Campos da requisição*
 
@@ -368,7 +421,7 @@
 
 ### Excluir Plano
 
-`DELETE` /seniorsmart/api/plano/{id}
+`DELETE` /api/planos/{id}
 
 *Corpo da resposta*
 
@@ -381,7 +434,7 @@
 
 ### Cadastrar Pagamento
 
-`POST` /seniorsmart/api/pagamento
+`POST` /api/pagamentos/cadastro
 
 *Campos da requisição*
 
@@ -417,7 +470,7 @@
 
 ### Listar Pagamentos
 
-`GET` /seniorsmart/api/pagamentos
+`GET` /api/pagamentos
 
 *Campos da resposta*
 
@@ -476,7 +529,7 @@
 
 ### Alterar Pagamento
 
-`PUT` /seniorsmart/api/pagamento/{id}
+`PUT` /api/pagamentos/{id}
 
 *Campos da requisição*
 
@@ -513,7 +566,7 @@
 
 ### Detalhes Pagamento
 
-`GET` /seniorsmart/api/pagamento/{id}
+`GET` /api/pagamentos/{id}
 
 *Campos da resposta*
 
@@ -550,7 +603,7 @@
 
 ### Excluir Pagamento
 
-`DELETE` /seniorsmart/api/pagamento/{id}
+`DELETE` /api/pagamentos/{id}
 
 *Corpo da resposta*
 
@@ -563,7 +616,7 @@
 
 ### Cadastrar Pergunta
 
-`POST` /seniorsmart/api/pergunta
+`POST` /api/pergunta
 
 *Campos da requisição*
 
@@ -591,7 +644,7 @@
 
 ### Listar Perguntas
 
-`GET` /seniorsmart/api/perguntas
+`GET` /api/pergunta
 
 *Campos da resposta*
 
@@ -632,7 +685,7 @@
 
 ### Detalhes Pergunta
 
-`GET` /seniorsmart/api/pergunta/{id}
+`GET` /api/pergunta/{id}
 
 *Campos da resposta*
 
@@ -662,7 +715,7 @@
 
 ### Cadastrar Resposta
 
-`POST` /seniorsmart/api/resposta
+`POST` /api/resposta
 
 *Campos da requisição*
 
@@ -687,7 +740,7 @@
 
 ### Listar Respostas
 
-`GET` /seniorsmart/api/respostas
+`GET` /api/resposta
 
 *Campos da resposta*
 
@@ -714,21 +767,21 @@
         "idResposta": 2,
         "idPergunta": 2,
         "resposta": "Para enviar uma mensagem no WhatsApp, siga os passos abaixo:
-        1. Abra o aplicativo do WhatsApp no seu celular.
-        2. Toque na opção de bate-papo ou no nome do contato para quem deseja enviar a mensagem.
-        3. Digite a mensagem no campo de texto.
-        4. Toque no botão de envio (geralmente representado por um ícone de avião de papel).
-        5. A mensagem será enviada ao contato selecionado.
+        5. Abra o aplicativo do WhatsApp no seu celular.
+        6. Toque na opção de bate-papo ou no nome do contato para quem deseja enviar a mensagem.
+        7. Digite a mensagem no campo de texto.
+        8. Toque no botão de envio (geralmente representado por um ícone de avião de papel).
+        9. A mensagem será enviada ao contato selecionado.
         Espero que estas instruções sejam úteis!"
     },
     {
         "idResposta": 3,
         "idPergunta": 3,
         "resposta": "Para adicionar um contato na lista de contatos do seu celular, siga os passos abaixo:
-        1. Abra o aplicativo de contatos no seu celular.
-        2. Selecione a opção de adicionar um novo contato.
-        3. Preencha os campos de nome, número de telefone e outras informações relevantes do contato.
-        4. Salve o contato.
+        10. Abra o aplicativo de contatos no seu celular.
+        11. Selecione a opção de adicionar um novo contato.
+        12. Preencha os campos de nome, número de telefone e outras informações relevantes do contato.
+        13. Salve o contato.
         O novo contato será adicionado à sua lista de contatos do celular e estará disponível para acesso e uso."
     }
 ]
@@ -745,7 +798,7 @@
 
 ### Detalhes Resposta
 
-`GET` /seniorsmart/api/resposta/{id}
+`GET` /api/resposta/{id}
 
 *Campos da resposta*
 
