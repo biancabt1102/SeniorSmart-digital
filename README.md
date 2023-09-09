@@ -217,13 +217,18 @@ Legenda da solução:
 
 ```
 {
-    "nomeUsuario": "Matheus Araujo",
-    "emailUsuario": "matheusaraujo@hotmail.com",
-    "senhaUsuario": "03121865",
-    "confirmacaoSenha": "03121865",
-    "dataNascimentoUsuario": "15-05-1860",
-    "telefoneUsuario": "11940028922",
-    "tipoPlano": "Anual"
+    "nome": "Math",
+    "email": "matheusaraujo@hotmail.com",
+    "senha": "03121985",
+    "confirmarSenha": "03121985",
+    "data": "1860-05-15",
+    "telefone": "(11) 94002-8922",
+    "plano": {
+        "id": 2,
+        "tipoPlano": "Mensal",
+        "planoMensal": 35,
+        "planoAnual": null
+    }
 }
 ```
 
@@ -302,7 +307,9 @@ Legenda da solução:
 
 ```
 {
-    "tipoPlano": "Teste Gratis"
+    "tipoPlano": "Anual",
+    "planoMensal": null,
+    "planoAnual": 378
 }
 ```
 
@@ -367,6 +374,7 @@ Legenda da solução:
 
 | Campo             | Tipo      | Obrigatório    | Descrição                                                   |
 |-------------------|-----------|:--------------:|-------------------------------------------------------------|
+|idPlano            |Long       |sim             | O id de um plano previamente criado.                        |
 |tipoPlano          |String     |não             |O tipo de pagamento escolhido pelo usuário. (teste grátis, anual ou mensal)|
 |planoMensal        |BigDecimal |não             |Valor do plano mensal.                                   |
 |planoAnual         |BigDecimal |não             |Valor do plano anual.                                 |
@@ -397,6 +405,7 @@ Legenda da solução:
 
 | Campo             | Tipo      | Descrição                                                   |
 |-------------------|-----------|-------------------------------------------------------------|
+|idPlano            |Long       |sim             | O id de um plano previamente criado.                        |
 |tipoPlano          |String     |O tipo de pagamento escolhido pelo usuário. (teste grátis, anual ou mensal)|
 |planoMensal        |BigDecimal |Valor do plano mensal.                                   |
 |planoAnual         |BigDecimal |Valor do plano anual.                                 |
@@ -440,7 +449,6 @@ Legenda da solução:
 
 | Campo             | Tipo   | Obrigatório | Descrição                                                   |
 |-------------------|--------|:-----------:|-------------------------------------------------------------|
-|idUsuario          |Long    |sim          |ID do usuário associado à informação de pagamento.           |
 |nomeTitular        |String  |sim          |Nome do titular do cartão.                                   |
 |numeroCartao       |String  |sim          |Número do cartão de crédito.                                 |
 |dataValidadeCartao |String  |sim          |Data de validade do cartão de crédito. (No formato "MM/YYYY")|
@@ -449,12 +457,16 @@ Legenda da solução:
 
 ```
 {
-    "idUsuario": 1,
-    "nomeTitular": "MATHEUS ARAUJO",
-    "numeroCartao": "1234 5678 9012 3456",
-    "dataValidadeCartao": "10/2024",
-    "codigoSeguranca": "123",
-    "tipoPlano": "Anual"
+    "nomeNoCartao": "MATHEUS ARAUJO",
+    "numeroDoCartao": "1234 5678 9012 3456",
+    "validadeDoCartao": "2024-10-01",
+    "codigoDoCartao": "123",
+    "plano": {
+        "id": 1,
+        "tipoPlano": "Teste grátis",
+        "planoMensal": null,
+        "planoAnual": null
+    }
 }
 ```
 
@@ -477,7 +489,6 @@ Legenda da solução:
 | Campo             | Tipo   | Descrição                                                   |
 |-------------------|--------|-------------------------------------------------------------|
 |idPagamento        |Long    |O id de um pagamento previamente criado.                     |
-|idUsuario          |Long    |ID do usuário associado à informação de pagamento.           |
 |nomeTitular        |String  |Nome do titular do cartão.                                   |
 |numeroCartao       |String  |Número do cartão de crédito.                                 |
 |dataValidadeCartao |String  |Data de validade do cartão de crédito. (No formato "MM/YYYY")|
@@ -535,7 +546,6 @@ Legenda da solução:
 
 | Campo             | Tipo   | Obrigatório | Descrição                                                   |
 |-------------------|--------|:-----------:|-------------------------------------------------------------|
-|idUsuario          |Long    |sim          |ID do usuário associado à informação de pagamento.           |
 |idPagamento        |Long    |sim          |O id de um pagamento previamente criado.                     |
 |nomeTitular        |String  |não          |Nome do titular do cartão.                                   |
 |numeroCartao       |String  |não          |Número do cartão de crédito.                                 |
@@ -544,13 +554,16 @@ Legenda da solução:
 |tipoPlano          |String  |sim          | O tipo de pagamento escolhido pelo usuário. (teste grátis, anual ou mensal)|
 ```
 {
-    "idUsuario": 1,
-    "idPagamento": 1,
-    "nomeTitular": "MATHEUS ARAUJO",
-    "numeroCartao": "5678 9012 3456 1234",
-    "dataValidadeCartao": "07/2025",
-    "codigoSeguranca": "321",
-    "tipoPlano": "Mensal"
+    "nomeNoCartao": "MATH ARAUJO",
+    "numeroDoCartao": "1234 5678 9012 3456",
+    "validadeDoCartao": "2024-10-01",
+    "codigoDoCartao": "321",
+    "plano": {
+        "id": 1,
+        "tipoPlano": "Teste grátis",
+        "planoMensal": null,
+        "planoAnual": null
+    }
 }
 ```
 
@@ -573,7 +586,6 @@ Legenda da solução:
 | Campo             | Tipo   | Descrição                                                   |
 |-------------------|--------|-------------------------------------------------------------|
 |idPagamento        |Long    |O id de um pagamento previamente criado.                     |
-|idUsuario          |Long    |ID do usuário associado à informação de pagamento.           |
 |nomeTitular        |String  |Nome do titular do cartão.                                   |
 |numeroCartao       |String  |Número do cartão de crédito.                                 |
 |dataValidadeCartao |String  |Data de validade do cartão de crédito. (No formato "MM/YYYY")|
@@ -621,14 +633,12 @@ Legenda da solução:
 *Campos da requisição*
 
 | Campo    | Tipo  | Obrigatório | Descrição                          |
-|----------|-------|:-----------:|------------------------------------|
-|idUsuario |Long   |sim          |ID do usuário associado à pergunta. |           
+|----------|-------|:-----------:|------------------------------------|           
 |pergunta  |String |sim          |A pergunta feita pelo idoso.        |
 
 
 ```
 {
-    "idUsuario": 1,
     "pergunta": "Como faço para tirar uma foto com o meu celular?"
 }
 ```
@@ -651,7 +661,6 @@ Legenda da solução:
 | Campo     | Tipo  | Descrição                                    |
 |-----------|-------|----------------------------------------------|
 |idPergunta |Long   |O id da pergunta à qual a resposta se refere. |
-|idUsuario  |Long   |Id do usuário associado à pergunta.           |
 |pergunta   |String |A pergunta feita pelo idoso.                  |
 
 ```
@@ -692,7 +701,6 @@ Legenda da solução:
 | Campo     | Tipo  | Descrição                                    |
 |-----------|-------|----------------------------------------------|
 |idPergunta |Long   |O id da pergunta à qual a resposta se refere. |
-|idUsuario  |Long   |Id do usuário associado à pergunta.           |
 |pergunta   |String |A pergunta feita pelo idoso.                  |
 
 
@@ -726,8 +734,11 @@ Legenda da solução:
 
 ```
 {
-    "idPergunta": 1,
-    "resposta": "Para tirar uma foto, abra o aplicativo da câmera e toque no ícone da câmera. Em seguida, aponte a câmera para o que deseja fotografar e toque no botão de tirar foto."
+    "resposta": "Abra o aplicativo Contatos ou Pessoas em seu dispositivo. Esse aplicativo pode ter nomes diferentes dependendo da marca do seu smartphone. Toque no ícone de adição                    (+) ou no botão Novo contato (geralmente localizado na parte inferior da tela). Você será direcionado para uma tela onde poderá inserir as informações do contato.                     Normalmente, você pode adicionar: Nome: Digite o nome completo do contato. Número de telefone: Insira o número de telefone do contato. Endereço de email: Adicione                     o endereço de email do contato (opcional). Foto do contato: Você pode adicionar uma foto do contato, se desejar. Outras informações: Dependendo do aplicativo, você                    também pode adicionar informações como endereço, empresa, aniversário, etc. Após preencher as informações necessárias, toque em Salvar ou no ícone de confirmação                      para salvar o contato.",
+    "pergunta": {
+        "id": 6,
+        "pergunta":"Como cadastro um contato?"
+    }
 }
 ```
 
