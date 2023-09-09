@@ -4,7 +4,24 @@
 
 <hr>
 
-*Para rodar adicionar seu endereço de ip no properties da Api e colocar username e password da oracle ou outras configurações se necessário. Faça dowload da dependências e faça um reload no mavem. Possivel vizualizar o swagger quando estiver rodando.*
+*Para rodar adicionar seu endereço de ip no properties da Api e colocar username e password da oracle ou outras configurações se necessário (O ip no properties deve ser usado para ligar com o react native). Faça dowload da dependências e faça um reload no mavem. Possivel vizualizar o swagger quando estiver rodando.*
+
+```
+# Configurações do banco de dados Oracle
+spring.datasource.url=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+spring.datasource.username=username
+spring.datasource.password=password
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+spring.jpa.hibernate.ddl-auto=update
+
+spring.profiles.active=dev //Caso utilize o react native nessa solução, comente essa linha. Esse código tira a necessidade do token.
+// O programa no native foi criado com a utilização do token. Não comentar antes de rodar daria conflito.
+
+server.error.include-stacktrace=never
+
+server.address=seu ip //Caso utilize o react native coloque o endereço de ip da sua maquina tanto aqui quando na parte do react native.
+// Caso utilize o next.js, pode comentar essa parte pois o mesmo roda no localhost.
+```
 
 <br>
 
