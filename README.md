@@ -42,6 +42,13 @@ Legenda da solução:
 
 <br><hr>
 
+## TesteS
+
+Você pode testar o front com o Back, basta usar o código de Hybrid e fazer as devidas mudanças que quiser
+- Link do Front: https://github.com/biancabt1102/SeniorSmart-Hybrid
+
+<hr>
+
 ## Endpoints
 
 - Usuário:
