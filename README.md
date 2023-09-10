@@ -4,6 +4,12 @@
 
 <hr>
 
+## Protótipo funcional da aplicação
+
+[Vídeo do protótipo](https://www.youtube.com/watch?v=-tCpLz5HO1Q)
+
+<br>
+
 *Para rodar adicionar seu endereço de ip no properties da Api e colocar username e password da oracle ou outras configurações se necessário (O ip no properties deve ser usado para ligar com o react native). Faça dowload da dependências e faça um reload no mavem. Possivel vizualizar o swagger quando estiver rodando.*
 
 ```
