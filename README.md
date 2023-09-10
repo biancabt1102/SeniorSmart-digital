@@ -855,3 +855,14 @@ Legenda da solução:
 |:------:|----------------------------------------------|
 |200     | Os dados foram retornados com sucesso.       |
 |404     | Não foi encontrado uma resposta com esse ID. |
+
+<hr>
+
+## Contribuição
+
+Se você deseja contribuir para o projeto, sinta-se à vontade para enviar pull requests ou relatar problemas no repositório do projeto. Esse projeto ainda se encontra em construção.
+
+## Licença
+
+Este projeto é licenciado sob a Licença MIT - consulte o arquivo [LICENSE](./LICENSE) para obter mais detalhes.
+
