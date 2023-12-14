@@ -6,7 +6,7 @@
 
 ## Protótipo funcional da aplicação
 
-[Vídeo do protótipo](https://www.youtube.com/watch?v=-tCpLz5HO1Q)
+[Vídeo do protótipo](https://youtu.be/bTIsSFbi-U0?si=pB3RdVJetdALAF2j)
 
 <br>
 
